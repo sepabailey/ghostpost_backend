@@ -15,5 +15,5 @@ class Post(models.Model):
     def __str__(self):
         return self.post_title
 
-    # def results(self):
-    #     return(self.upvotes - self.downvotes)
+    def results(self):
+        return(self.upvotes - self.downvotes)
