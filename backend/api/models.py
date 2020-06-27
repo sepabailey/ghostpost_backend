@@ -10,7 +10,7 @@ class Post(models.Model):
     downvotes = models.IntegerField(default=0)
     results = models.IntegerField(default=0)
     boast_or_roast = models.BooleanField(
-        default=False, help_text="Boast if checked")
+        default=None, help_text="Boast if checked")
 
     def __str__(self):
         return self.post_title

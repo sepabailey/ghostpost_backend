@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect
 from rest_framework import viewsets
 from backend.api.serializers import PostSerializer
 from backend.api.models import Post
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from backend.api.forms import AddPostForm
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -39,6 +40,21 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def highestvote(self, request):
-        highestvotes = Post.objects.all().order_by('-results')
+        highestvotes = Post.objects.all().order_by('-upvotes', 'downvotes')
         serializer = self.get_serializer(highestvotes, many=True)
         return Response(serializer.data)
+
+
+def addpost(request):
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            newpost = form.cleaned_data
+            Post.objects.create(
+                post_title=newpost['post_title'],
+                body=newpost['body'],
+                boast_or_roast=newpost['boast_or_roast'],
+            )
+            return HttpResponseRedirect('http://localhost:3000/')
+    form = AddPostForm()
+    return render(request, 'addpost.html', {'form': form})
